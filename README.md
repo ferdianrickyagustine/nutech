@@ -1,1 +1,1 @@
-# nutech
+npm i
