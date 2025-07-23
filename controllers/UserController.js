@@ -76,7 +76,7 @@ class UserController {
                 email: user.email
             }
             // console.log(payload);
-            
+
             const access_token = signToken(payload)
 
             res.status(200).json({
@@ -96,7 +96,30 @@ class UserController {
                     data: null
                 });
             }
-            
+
+            res.status(500).json({
+                message: "Internal Server Error"
+            })
+        }
+    }
+
+    static async profile(req, res) {
+        try {
+            const { email } = req.loginInfo
+
+            const user = await Model.findUserByEmail({ email })
+
+            res.status(200).json({
+                status: 0,
+                message: "Sukses",
+                data: {
+                    email: user.email,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    profile_image: user.profile_image
+                }
+            })
+        } catch (error) {
             res.status(500).json({
                 message: "Internal Server Error"
             })

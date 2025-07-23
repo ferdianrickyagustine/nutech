@@ -13,7 +13,7 @@ app.post('/register', UserController.register)
 app.post('/login', UserController.login)
 
 app.use(authentication)
-app.get('/profile')
+app.get('/profile', UserController.profile)
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
