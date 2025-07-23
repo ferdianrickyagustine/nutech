@@ -125,6 +125,30 @@ class UserController {
             })
         }
     }
+
+    static async updateProfileName(req, res) {
+        try {
+            const { email } = req.loginInfo
+            const { first_name, last_name } = req.body
+
+            const user = await Model.updateProfileName({ email, first_name, last_name })
+
+            res.status(200).json({
+                status: 0,
+                message: "Update Pofile berhasil",
+                data: {
+                    email: user.email,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    profile_image: user.profile_image
+                }
+            })
+        } catch (error) {
+            res.status(500).json({
+                message: "Internal Server Error"
+            })
+        }
+    }
 }
 
 module.exports = UserController

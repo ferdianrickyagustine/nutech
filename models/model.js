@@ -33,7 +33,7 @@ class Model {
             if (result.rows.length === 0 || !compare(password, result.rows[0].password)) {
                 throw { name: "Unauthorized" }
             }
-            
+
             const user = {
                 id: result.rows[0].id,
                 email: result.rows[0].email
@@ -53,6 +53,29 @@ class Model {
                 return null //nanti jadi throw unauthorized
             }
             // console.log(result.rows);
+
+            return result.rows[0]
+        } catch (error) {
+            throw error
+        }
+    }
+
+    static async updateProfileName({ email, first_name, last_name }) {
+        try {
+            const query = `UPDATE "Users" 
+                            SET 
+                            first_name = $2,
+                            last_name = $3
+                            WHERE email = $1
+                            RETURNING email, first_name, last_name, profile_image 
+                            `
+            const result = await pool.query(query, [email, first_name, last_name])
+
+            if (result.rows.length === 0) {
+                return null //nanti jadi throw unauthorized
+            }
+
+            console.log(result.rows[0]);
             
             return result.rows[0]
         } catch (error) {

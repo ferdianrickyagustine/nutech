@@ -14,6 +14,9 @@ app.post('/login', UserController.login)
 
 app.use(authentication)
 app.get('/profile', UserController.profile)
+app.put('/profile/update', UserController.updateProfileName)
+
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
