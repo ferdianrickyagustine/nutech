@@ -62,7 +62,8 @@ class Model {
 
     static async updateProfileName({ email, first_name, last_name }) {
         try {
-            const query = `UPDATE "Users" 
+            const query = `
+                            UPDATE "Users" 
                             SET 
                             first_name = $2,
                             last_name = $3
@@ -75,7 +76,27 @@ class Model {
                 return null //nanti jadi throw unauthorized
             }
 
-            console.log(result.rows[0]);
+            // console.log(result.rows[0]);
+            
+            return result.rows[0]
+        } catch (error) {
+            throw error
+        }
+    }
+
+    static async updateProfileImage({ email, imageUrl }) {
+        try {
+            const query = `
+                            UPDATE "Users" 
+                            SET profile_image = $2
+                            WHERE email = $1
+                            RETURNING email, first_name, last_name, profile_image
+                            `
+            const result = await pool.query(query, [email, imageUrl])
+
+            if (result.rows.length === 0) {
+                return null
+            }
             
             return result.rows[0]
         } catch (error) {

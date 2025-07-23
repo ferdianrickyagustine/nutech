@@ -149,6 +149,42 @@ class UserController {
             })
         }
     }
+
+    static async updateProfileImage(req, res) {
+        try {
+            const { email } = req.loginInfo
+            const file = req.file
+
+            if (!file) {
+                return res.status(400).json({
+                    status: 100,
+                    message: "Gambar harus dipilih",
+                    data: null
+                })
+            }
+
+            const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${file.filename}`
+
+            const user = await Model.updateProfileImage({ email, imageUrl })
+
+            res.status(200).json({
+                status: 0,
+                message: "Update Profile Image berhasil",
+                data: {
+                    email: user.email,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    profile_image: user.profile_image
+                }
+            })
+        } catch (error) {
+            console.log(error);
+            
+            res.status(500).json({
+                message: "Internal Server Error"
+            })
+        }
+    }
 }
 
 module.exports = UserController
