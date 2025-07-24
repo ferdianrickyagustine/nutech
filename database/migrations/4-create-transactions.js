@@ -5,6 +5,7 @@ async function setup() {
 
     let queryTransactions = `create table if not exists "Transactions" (
                                 invoice_number varchar,
+                                email varchar,
                                 service_code varchar,
                                 service_name varchar,
                                 transaction_type varchar,

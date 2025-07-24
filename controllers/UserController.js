@@ -222,7 +222,7 @@ class UserController {
 
             const user = await Model.topup({ email, top_up_amount })
 
-            await Model.createTopupTransaction(top_up_amount);
+            await Model.createTopupTransaction({ email, top_up_amount });
 
             res.status(200).json({
                 status: 0,
@@ -250,16 +250,54 @@ class UserController {
             res.status(200).json({
                 status: 0,
                 message: "Transaksi berhasil",
+                data: [
+                    {
+                        invoice_number: transaction.invoice_number,
+                        service_code: transaction.service_code,
+                        service_name: transaction.service_name,
+                        transaction_type: transaction.transaction_type,
+                        total_amount: transaction.total_amount,
+                        created_on: transaction.created_on
+                    }
+                ]
+            })
+        } catch (error) {
+            if (error.name === "ServiceNotFound") {
+                return res.status(400).json({
+                    status: 102,
+                    message: "Service ataus Layanan tidak ditemukan",
+                    data: null
+                });
+            }
+            if (error.name === "Insufficient") {
+                return res.status(400).json({
+                    status: 102,
+                    message: "Saldo tidak mencukupi",
+                    data: null
+                });
+            }
+            res.status(500).json({
+                message: "Internal Server Error"
+            })
+        }
+    }
+
+    static async transactionHistory(req, res) {
+        try {
+            const { email } = req.loginInfo
+
+            const history = await Model.transactionHistory(email)
+
+            res.status(200).json({
+                status: 0,
+                message: "Get History Berhasil",
                 data: {
-                    invoice_number: transaction.invoice_number,
-                    service_code: transaction.service_code,
-                    service_name: transaction.service_name,
-                    transaction_type: transaction.transaction_type,
-                    total_amount: transaction.total_amount,
-                    created_on: transaction.created_on
+                    records: history
                 }
             })
         } catch (error) {
+            // console.log(error);
+
             res.status(500).json({
                 message: "Internal Server Error"
             })

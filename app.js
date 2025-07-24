@@ -25,6 +25,7 @@ app.put('/profile/image', upload.single('profile_image'), UserController.updateP
 app.get('/balance', UserController.viewBalance)
 app.post('/topup', UserController.topup)
 app.post('/transaction', UserController.transaction)
+app.get('/transaction/history', UserController.transactionHistory)
 
 
 app.listen(port, () => {

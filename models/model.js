@@ -163,14 +163,14 @@ class Model {
         }
     }
 
-    static async createTopupTransaction(top_up_amount) {
+    static async createTopupTransaction({ email, top_up_amount }) {
         try {
             const invoiceNumber = `INV${new Date().toISOString().slice(0, 10)}`
             const query = `
-                            INSERT INTO "Transactions" (invoice_number, service_code, service_name, transaction_type, total_amount)
-                            VALUES ($1, $2, $3, $4, $5)
+                            INSERT INTO "Transactions" (invoice_number, email, service_code, service_name, transaction_type, total_amount)
+                            VALUES ($1, $2, $3, $4, $5, $6)
                             `
-            await pool.query(query, [invoiceNumber, 'TOPUP', 'TOPUP', 'TOPUP', top_up_amount])
+            await pool.query(query, [invoiceNumber, email, 'TOPUP', 'TOPUP', 'TOPUP', top_up_amount])
 
             return true
         } catch (error) {
@@ -198,16 +198,12 @@ class Model {
 
             // console.log(userResult.rows);
 
-            if (userResult.rows.length === 0) {
-                throw { name: "UserNotFound" }
-            }
-
             const { balance } = userResult.rows[0]
 
             if (balance < service_tariff) {
                 throw { name: "Insufficient" }
             }
-            
+
             const updateBalanceQuery = `UPDATE "Users"
                                         SET balance = balance - $1 
                                         WHERE email = $2
@@ -215,14 +211,32 @@ class Model {
             await pool.query(updateBalanceQuery, [service_tariff, email])
 
             const insertQuery = `
-                                INSERT INTO "Transactions" (invoice_number, service_code, service_name, transaction_type, "total_amount")
-                                VALUES ($1, $2, $3, $4, $5)
+                                INSERT INTO "Transactions" (invoice_number, email, service_code, service_name, transaction_type, "total_amount")
+                                VALUES ($1, $2, $3, $4, $5, $6)
                                 RETURNING *
                                 `
-            const result = await pool.query(insertQuery, [invoiceNumber, service_code, service_name, 'PAYMENT', service_tariff])
+            const result = await pool.query(insertQuery, [invoiceNumber, email, service_code, service_name, 'PAYMENT', service_tariff])
             // console.log(result.rows);
 
             return result.rows[0]
+        } catch (error) {
+            throw error
+        }
+    }
+
+    static async transactionHistory(email) {
+        try {
+            const query = `
+                            SELECT invoice_number, transaction_type, service_name AS description, total_amount, created_on
+                            FROM "Transactions"
+                            WHERE email = $1
+                            ORDER BY created_on DESC
+                            `
+            const result = await pool.query(query, [email])
+
+            console.log(result.rows);
+            
+            return result.rows
         } catch (error) {
             throw error
         }
