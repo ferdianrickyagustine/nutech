@@ -140,6 +140,28 @@ class Model {
             throw error
         }
     }
+
+
+    // Topup
+
+    static async topup({ email, top_up_amount }) {
+        try {
+            const query = `
+                            UPDATE "Users"
+                            SET balance = balance + $2
+                            WHERE email = $1
+                            RETURNING balance
+                            `
+
+            const result = await pool.query(query, [email, top_up_amount])
+
+            // console.log(result.rows);
+            
+            return result.rows[0]
+        } catch (error) {
+            throw error
+        }
+    }
 }
 
 module.exports = Model
