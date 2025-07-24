@@ -222,6 +222,8 @@ class UserController {
 
             const user = await Model.topup({ email, top_up_amount })
 
+            await Model.createTopupTransaction(top_up_amount);
+
             res.status(200).json({
                 status: 0,
                 message: "Top Up Balance berhasil",
@@ -230,11 +232,15 @@ class UserController {
                 }
             })
         } catch (error) {
+            console.log(error);
+            
             res.status(500).json({
                 message: "Internal Server Error"
             })
         }
     }
+
+    static async 
 }
 
 module.exports = UserController

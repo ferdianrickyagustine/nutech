@@ -3,14 +3,12 @@ async function runMigrations() {
         const migrateUsers = require("./1-create-users");
         const migrateBanners = require("./2-create-banners");
         const migrateServices = require("./3-create-services");
-        // const migrateBalance = require("./4-create-balance");
-        // const migrateTransactions = require("./5-create-transactions");
+        const migrateTransactions = require("./4-create-transactions");
 
         await migrateUsers();
         await migrateBanners();
         await migrateServices();
-        // await migrateBalance();
-        // await migrateTransactions();
+        await migrateTransactions();
 
         console.log("All migrations completed!");
         process.exit()

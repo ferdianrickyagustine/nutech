@@ -162,6 +162,21 @@ class Model {
             throw error
         }
     }
+
+    static async createTopupTransaction(top_up_amount) {
+        try {
+            const invoiceNumber = `INV${new Date().toISOString().slice(0, 10)}`
+            const query = `
+                            INSERT into "Transactions" (invoice_number, service_code, service_name, transaction_type, total_amount)
+                            VALUES ($1, $2, $3, $4, $5)
+                            `
+            await pool.query(query, [invoiceNumber, 'TOPUP', 'TOPUP', 'TOPUP', top_up_amount])
+
+            return true
+        } catch (error) {
+            throw error
+        }
+    }
 }
 
 module.exports = Model

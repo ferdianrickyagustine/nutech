@@ -5,7 +5,7 @@ Pada API /profile, terdapat hal yang harus di execute melalui SQL Editor
 Dengan menambahkan 
 ```
 ALTER TABLE "Users" 
-ADD COLUMN profile_image VARCHAR(255)
+ADD COLUMN profile_image VARCHAR
 ```
 ```
 UPDATE "Users" 
