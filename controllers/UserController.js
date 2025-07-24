@@ -232,15 +232,39 @@ class UserController {
                 }
             })
         } catch (error) {
-            console.log(error);
-            
+            // console.log(error);
+
             res.status(500).json({
                 message: "Internal Server Error"
             })
         }
     }
 
-    static async 
+    static async transaction(req, res) {
+        try {
+            const { email } = req.loginInfo
+            const { service_code } = req.body
+
+            const transaction = await Model.transaction({ email, service_code })
+
+            res.status(200).json({
+                status: 0,
+                message: "Transaksi berhasil",
+                data: {
+                    invoice_number: transaction.invoice_number,
+                    service_code: transaction.service_code,
+                    service_name: transaction.service_name,
+                    transaction_type: transaction.transaction_type,
+                    total_amount: transaction.total_amount,
+                    created_on: transaction.created_on
+                }
+            })
+        } catch (error) {
+            res.status(500).json({
+                message: "Internal Server Error"
+            })
+        }
+    }
 }
 
 module.exports = UserController

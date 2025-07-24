@@ -79,7 +79,7 @@ class Model {
             }
 
             // console.log(result.rows[0]);
-            
+
             return result.rows[0]
         } catch (error) {
             throw error
@@ -99,7 +99,7 @@ class Model {
             if (result.rows.length === 0) {
                 return null
             }
-            
+
             return result.rows[0]
         } catch (error) {
             throw error
@@ -134,7 +134,7 @@ class Model {
                             `
 
             const result = await pool.query(query)
-            
+
             return result.rows
         } catch (error) {
             throw error
@@ -156,7 +156,7 @@ class Model {
             const result = await pool.query(query, [email, top_up_amount])
 
             // console.log(result.rows);
-            
+
             return result.rows[0]
         } catch (error) {
             throw error
@@ -167,12 +167,62 @@ class Model {
         try {
             const invoiceNumber = `INV${new Date().toISOString().slice(0, 10)}`
             const query = `
-                            INSERT into "Transactions" (invoice_number, service_code, service_name, transaction_type, total_amount)
+                            INSERT INTO "Transactions" (invoice_number, service_code, service_name, transaction_type, total_amount)
                             VALUES ($1, $2, $3, $4, $5)
                             `
             await pool.query(query, [invoiceNumber, 'TOPUP', 'TOPUP', 'TOPUP', top_up_amount])
 
             return true
+        } catch (error) {
+            throw error
+        }
+    }
+
+    static async transaction({ email, service_code }) {
+        try {
+            const invoiceNumber = `INV${new Date().toISOString().slice(0, 10)}`
+            const query = `select * FROM "Services" WHERE service_code = $1`
+            const serviceResult = await pool.query(query, [service_code])
+
+            if (serviceResult.rows.length === 0) {
+                throw { name: "ServiceNotFound" }
+            }
+
+            // console.log(serviceResult.rows);
+
+            const { service_name, service_tariff } = serviceResult.rows[0]
+
+
+            const userQuery = `SELECT balance FROM "Users" WHERE email = $1`
+            const userResult = await pool.query(userQuery, [email])
+
+            // console.log(userResult.rows);
+
+            if (userResult.rows.length === 0) {
+                throw { name: "UserNotFound" }
+            }
+
+            const { balance } = userResult.rows[0]
+
+            if (balance < service_tariff) {
+                throw { name: "Insufficient" }
+            }
+            
+            const updateBalanceQuery = `UPDATE "Users"
+                                        SET balance = balance - $1 
+                                        WHERE email = $2
+                                        `
+            await pool.query(updateBalanceQuery, [service_tariff, email])
+
+            const insertQuery = `
+                                INSERT INTO "Transactions" (invoice_number, service_code, service_name, transaction_type, "total_amount")
+                                VALUES ($1, $2, $3, $4, $5)
+                                RETURNING *
+                                `
+            const result = await pool.query(insertQuery, [invoiceNumber, service_code, service_name, 'PAYMENT', service_tariff])
+            // console.log(result.rows);
+
+            return result.rows[0]
         } catch (error) {
             throw error
         }
