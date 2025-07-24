@@ -8,7 +8,9 @@ async function setup() {
                         email varchar not null,
                         first_name varchar not null,
                         last_name varchar not null,
-                        password varchar not null
+                        password varchar not null,
+                        profile_image varchar,
+                        balance int
                         )`
 
     await pool.query(queryDelete)

@@ -7,16 +7,19 @@ class Model {
     static async register({ email, first_name, last_name, password }) {
         try {
             const hashedPass = hash(password)
-
-            const query = `insert into "Users" (email, first_name, last_name, password)
+            let profile_image = "https://yoururlapi.com/profile.jpeg"
+            let balance = 1000000
+            const query = `insert into "Users" (email, first_name, last_name, password, profile_image, balance)
                             values
-                            ($1, $2, $3, $4)`
+                            ($1, $2, $3, $4, $5, $6)`
 
             const result = await pool.query(query, [
                 email,
                 first_name,
                 last_name,
-                hashedPass
+                hashedPass,
+                profile_image,
+                balance
             ])
 
             return true

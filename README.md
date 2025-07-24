@@ -1,27 +1,15 @@
-npm i
+# API SWAGGER
 
-***
-Pada API /profile, terdapat hal yang harus di execute melalui SQL Editor
-Dengan menambahkan 
+Pertama-tama lakukan ini di CLI
 ```
-ALTER TABLE "Users" 
-ADD COLUMN profile_image VARCHAR
-```
-```
-UPDATE "Users" 
-SET profile_image = 'https://yoururlapi.com/profile.jpeg'
-WHERE id = 1
+npm install
 ```
 
-***
-Pada API /balance, terdapat hal yang harus di execute melalui SQL Editor
-Dengan menambahkan
+Kemudian dapat dilanjutkan di CLI menggunakan
 ```
-ALTER TABLE "Users" 
-ADD COLUMN balance INT
+node app
 ```
+atau
 ```
-UPDATE "Users"
-SET balance = 1000000
-WHERE id = 1
+npx nodemon app
 ```
