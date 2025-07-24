@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const express = require('express')
-const UserController = require('./controllers/userController')
+const UserController = require('./controllers/UserController')
 const authentication = require('./middlewares/authentication')
 const upload = require('./middlewares/multer')
 const BannerController = require('./controllers/BannerController')
