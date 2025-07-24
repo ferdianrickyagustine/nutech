@@ -122,6 +122,24 @@ class Model {
             throw error
         }
     }
+
+
+
+    // Services
+
+    static async viewServices() {
+        try {
+            const query = `SELECT service_code, service_name, service_icon, service_tariff
+                            FROM "Services"
+                            `
+
+            const result = await pool.query(query)
+            
+            return result.rows
+        } catch (error) {
+            throw error
+        }
+    }
 }
 
 module.exports = Model
