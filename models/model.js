@@ -224,19 +224,23 @@ class Model {
         }
     }
 
-    static async transactionHistory(email) {
+    static async transactionHistory(email, limit, offset) {
         try {
-            const query = `
+            let query = `
                             SELECT invoice_number, transaction_type, service_name AS description, total_amount, created_on
                             FROM "Transactions"
                             WHERE email = $1
                             ORDER BY created_on DESC
                             `
-            const result = await pool.query(query, [email])
+            const params = [email];
 
-            console.log(result.rows);
-            
-            return result.rows
+            if (typeof limit !== 'undefined' && typeof offset !== 'undefined') {
+                query += ` LIMIT $2 OFFSET $3`;
+                params.push(limit, offset);
+            }
+
+            const result = await pool.query(query, params);
+            return result.rows;
         } catch (error) {
             throw error
         }

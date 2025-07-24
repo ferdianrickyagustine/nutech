@@ -285,13 +285,19 @@ class UserController {
     static async transactionHistory(req, res) {
         try {
             const { email } = req.loginInfo
+            let { limit, offset } = req.query
 
-            const history = await Model.transactionHistory(email)
+            limit = typeof limit === 'string' ? parseInt(limit) : undefined;
+            offset = typeof offset === 'string' ? parseInt(offset) : 0;
+
+            const history = await Model.transactionHistory(email, limit, offset)
 
             res.status(200).json({
                 status: 0,
                 message: "Get History Berhasil",
                 data: {
+                    offset: offset ?? 0,
+                    limit: limit ?? history.length,
                     records: history
                 }
             })
