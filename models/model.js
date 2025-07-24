@@ -2,6 +2,8 @@ const pool = require("../database/config");
 const { hash, compare } = require("../helpers/bcrypt");
 
 class Model {
+    // User
+
     static async register({ email, first_name, last_name, password }) {
         try {
             const hashedPass = hash(password)
@@ -99,6 +101,23 @@ class Model {
             }
             
             return result.rows[0]
+        } catch (error) {
+            throw error
+        }
+    }
+
+
+    // Banners
+
+    static async viewBanners() {
+        try {
+            const query = `
+                            SELECT banner_name, banner_image, description
+                            FROM "Banners"
+                            `
+            const result = await pool.query(query)
+
+            return result.rows
         } catch (error) {
             throw error
         }

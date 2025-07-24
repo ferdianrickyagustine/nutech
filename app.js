@@ -4,6 +4,7 @@ const express = require('express')
 const UserController = require('./controllers/userController')
 const authentication = require('./middlewares/authentication')
 const upload = require('./middlewares/multer')
+const BannerController = require('./controllers/BannerController')
 const app = express()
 const port = process.env.PORT || 3000
 
@@ -12,6 +13,8 @@ app.use(express.urlencoded({ extended: true }))
 
 app.post('/register', UserController.register)
 app.post('/login', UserController.login)
+app.get('/banner', BannerController.read)
+
 
 app.use(authentication)
 app.get('/profile', UserController.profile)
