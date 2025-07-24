@@ -22,6 +22,7 @@ app.use(authentication)
 app.get('/profile', UserController.profile)
 app.put('/profile/update', UserController.updateProfileName)
 app.put('/profile/image', upload.single('profile_image'), UserController.updateProfileImage)
+app.get('/balance', UserController.viewBalance)
 
 
 app.listen(port, () => {

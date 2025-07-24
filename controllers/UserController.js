@@ -178,8 +178,28 @@ class UserController {
                 }
             })
         } catch (error) {
-            console.log(error);
-            
+            // console.log(error);
+            res.status(500).json({
+                message: "Internal Server Error"
+            })
+        }
+    }
+
+    static async viewBalance(req, res) {
+        try {
+            const { email } = req.loginInfo
+
+            const user = await Model.findUserByEmail({ email })
+
+            res.status(200).json({
+                status: 0,
+                message: "Get Balance Berhasil",
+                data: {
+                    balance: user.balance
+                }
+
+            })
+        } catch (error) {
             res.status(500).json({
                 message: "Internal Server Error"
             })

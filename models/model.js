@@ -48,7 +48,7 @@ class Model {
 
     static async findUserByEmail({ email }) {
         try {
-            const query = `SELECT id, email, first_name, last_name, profile_image FROM "Users" WHERE email = $1`
+            const query = `SELECT * FROM "Users" WHERE email = $1`
             const result = await pool.query(query, [email])
 
             if (result.rows.length === 0) {
